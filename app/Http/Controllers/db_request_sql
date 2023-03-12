@@ -1,0 +1,34 @@
+||Tenir compte de user.id=auth.id dans ces requetes
+#recherche par nom et prenom total paye groupe par association avec MontantTotalAPayer
+SELECT * FROM (SELECT SUM(reunions.mtcot) AS MontantTotalAPayer, associations.id AS associationId FROM `reunions`,`associations` WHERE reunions.association_id=associations.id GROUP BY associations.id) AS mtapParAssociation, (SELECT SUM(membre_reunion.mtcot) as totalpaye, associations.id AS associationId, membres.* FROM `membres`, `associations`, `users`, `reunions`,`membre_reunion` WHERE membres.nom="assumenda" AND membres.prenom="architecto" AND users.id=7 AND membres.association_id=associations.id AND associations.user_id=users.id AND reunions.association_id=associations.id AND membre_reunion.membre_id=membres.id AND membre_reunion.reunion_id=reunions.id GROUP BY associations.id) AS tpmParAssociation WHERE mtapParAssociation.associationId = tpmParAssociation.associationId
+
+#recherche par nom et prenom total paye groupe par association
+SELECT SUM(membre_reunion.mtcot) as totalpaye, associations.id AS associationId, membres.* FROM `membres`, `associations`, `users`, `reunions`,`membre_reunion` WHERE membres.nom="assumenda" AND membres.prenom="architecto" AND users.id=7 AND membres.association_id=associations.id AND associations.user_id=users.id AND reunions.association_id=associations.id AND membre_reunion.membre_id=membres.id AND membre_reunion.reunion_id=reunions.id GROUP BY associations.id
+
+#recherche par nom et prenom
+SELECT * FROM `membres`, `associations`, `users` WHERE membres.nom="assumenda" AND membres.prenom="architecto" AND users.id=7 AND membres.association_id=associations.id AND associations.user_id=users.id
+
+#MontantTotalAPayer par association
+SELECT SUM(reunions.mtcot) AS MontantTotalAPayer, associations.id FROM `reunions`,`associations` WHERE reunions.association_id=associations.id GROUP BY associations.id
+||Fin Tenir compte
+
+#association de user connecte(EX:id=7)
+SELECT associations.* FROM associations,users WHERE associations.user_id=users.id AND user_id=7
+
+#somme par membre pour une association (ex:3)
+SELECT membres.*, SUM(membre_reunion.mtcot) FROM `membres`,`associations`,`reunions`, `membre_reunion` WHERE associations.id=3 AND membres.association_id=associations.id AND reunions.association_id=associations.id AND membre_reunion.membre_id=membres.id AND membre_reunion.reunion_id=reunions.id GROUP BY membres.id
+
+#Membres dune association--unneeded
+SELECT membres.* FROM `membres`,`associations` WHERE associations.id=3 AND membres.association_id=associations.id
+
+#reunions auxquelles ont participe un membre(ex:3333) d'une association(ex:3)
+SELECT membre_reunion.*, associations.id , associations.denomination FROM `membres`,`reunions`,`associations`,`membre_reunion` WHERE associations.id=3 AND reunions.association_id=associations.id AND membres.association_id=associations.id AND membres.id=3333 AND membre_reunion.membre_id=membres.id AND membre_reunion.reunion_id=reunions.id
+
+#somme des mtcot de reunions auxquelles ont participe un membre(ex:3333) d'une association(ex:3)
+SELECT SUM(membre_reunion.mtcot) AS totalcotisation FROM `membres`,`reunions`,`associations`,`membre_reunion` WHERE associations.id=3 AND reunions.association_id=associations.id AND membres.association_id=associations.id AND membres.id=3333 AND membre_reunion.membre_id=membres.id AND membre_reunion.reunion_id=reunions.id
+
+#reunions d'une association(ex: id=3)--unneeded
+SELECT * FROM `reunions`,`associations` WHERE associations.id=3 AND reunions.association_id=associations.id
+
+#Somme des montants des reunions d'une association(ex: id=3)*
+SELECT SUM(reunions.mtcot) AS MontantTotalAPayer FROM `reunions`,`associations` WHERE associations.id=3 AND reunions.association_id=associations.id
